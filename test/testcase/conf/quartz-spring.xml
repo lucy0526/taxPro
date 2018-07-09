@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd 
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    
+    <!-- 注册一个普通bean -->
+    <bean id="quartzTask" class="testTimer.QuartzTask"></bean>
+    
+    <!-- 1.1制定任务信息 -->
+    <bean id="jobDetail1" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    	<!--   ① 设置执行对象
+ 			          ② 设置执行对象中对应的执行方法
+   	     		③ 是否可以同步执行:false不可同步执行
+   		 -->
+   		 <property name="targetObject" ref="quartzTask"></property>
+   		 <property name="targetMethod" value="doSimpleTriggerTask"></property>
+   		 <property name="concurrent" value="false"></property>
+    </bean>
+    <!-- 1.2制定任务信息 -->
+    <bean id="jobDetail2" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    	<!--   ① 设置执行对象
+ 			          ② 设置执行对象中对应的执行方法
+   	     		③ 是否可以同步执行:false不可同步执行
+   		 -->
+   		 <property name="targetObject" ref="quartzTask"></property>
+   		 <property name="targetMethod" value="doCronTriggerTask"></property>
+   		 <property name="concurrent" value="false"></property>
+    </bean>
+    
+    
+    <!-- 2.1制定任务执行时机（触发器） -->
+    <bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		    <!--    ① 设置任务详细
+   					② 设置执行延迟:3s
+   					③设置执行频率:每2秒执行一次
+   			 -->
+   			 <property name="jobDetail" ref="jobDetail1"></property>
+   			 <property name="startDelay" value="3000"></property>
+   			 <property name="repeatInterval" value="2000" ></property>
+    </bean>
+    
+    
+    <!-- 2.2制定任务执行时机（触发器） -->
+    <bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		    <!--  		  ① 设置任务详细
+  						 ② 设置执行时机（cronExpression）
+   						 cronExpression:秒 分 时 日 月 周 年（可选）（周和日不能同时出出现）
+   			 -->
+   			 <property name="jobDetail" ref="jobDetail2"></property>
+   			 <!--  
+   			 		value="0/3 * * * * ?" 从0s开始，/表示每3秒执行一次，任意分 时 日 月 周
+   			 		value="0-30 * * * * ?" 从0s-30s内，每一秒都执行一次，任意分 时 日 月 周
+   			 		value="0,5,7,10,20 * * * * ?" 制定每分钟特定时间，每分钟执行5次，任意分 时 日 月 周
+   			 		value="0 0 10 L * ?" 任意月的最后一天的10点钟执行
+   			 		value="* * * 18w * ?" 离任意月18号（星期六）最近的工作日（星期一-星期五）执行，如今天是17号为星期五就会执行，18号不执行，20号为星期一也不执行
+   			 		value="* * * ? * 2#3" 每个月的第3周的星期一	（从星期天开始数 是1，星期一是2）（第几周从0开始数）
+   			 -->
+   			 <property name="cronExpression" value="0/3 * * * * ?"></property>
+    </bean>
+    
+    
+    
+    <!-- 3.设置调度工厂 -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    	<!-- 设置触发器们 -->
+    	<property name="triggers">
+    		<list>
+    			<!-- <ref bean="simpleTrigger"></ref> -->
+    			<!--<ref bean="cronTrigger"></ref>-->
+    		</list>
+    	</property>
+    </bean>
+    
+</beans>

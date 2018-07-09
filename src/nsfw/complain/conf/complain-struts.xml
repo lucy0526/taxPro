@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts> 
+	<package name="complain-action" namespace="/nsfw" extends="base-default,json-default">
+								<!-- 单例 交给spring管理创建类-》给struts -->
+		<action name="complain_*" class="nsfw.complain.action.ComplainAction" method="{1}">
+			<result name="{1}">/WEB-INF/jsp/nsfw/complain/{1}.jsp</result>
+			
+			<!--使用重定向 原因：
+					如：从编辑页面过来，在显示列表时刷新，如果是转发，又会回到编辑页面
+			 在列表的时候执行的特殊，是重定向；原来的参数全部没有了，重新只有用url传值 -->
+			<result name="list" type="redirectAction">
+				<param name="actionName">complain_listUI</param>
+				<param name="complain.compTitle">${strTitle}</param>
+				<param name="complain.state">${strState}</param>
+				<param name="startTime">${startTime}</param>
+				<param name="endTime">${endTime}</param>
+				<param name="pageNo">${pageNo}</param>
+				<param name="encode">true</param>
+			</result>
+			<!-- 自动变成json格式 -->
+			<result type="json" name="annualStatisticData">
+				<param name="root">statisticMap</param>
+			</result>
+		</action>
+	</package>
+	
+</struts>

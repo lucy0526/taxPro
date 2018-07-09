@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="taxPro"
+  id="myeclipse.1529917915074"
+  context-root="/taxPro"
+  j2ee-spec="5.0"
+  archive="taxPro.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

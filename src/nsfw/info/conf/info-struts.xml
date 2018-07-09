@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts> 
+	<package name="info-action" namespace="/nsfw" extends="base-default">
+								<!-- 单例 交给spring管理创建类-》给struts -->
+		<action name="info_*" class="nsfw.info.action.InfoAction" method="{1}">
+			<result name="{1}">/WEB-INF/jsp/nsfw/info/{1}.jsp</result>
+			
+			<!--使用重定向 原因：
+					如：从编辑页面过来，在显示列表时刷新，如果是转发，又会回到编辑页面
+			 在列表的时候执行的特殊，是重定向；原来的参数全部没有了，重新只有用url传值 -->
+			<result name="list" type="redirectAction">
+				<param name="actionName">info_listUI</param>
+				<param name="info.title">${strTitle}</param>
+				<!-- 给中文参数编码，在后台解码，防止出现乱码 -->
+				<param name="encode">true</param>
+				<param name="pageNo">${pageNo}</param>
+			</result>
+		</action>
+	</package>
+	
+</struts>
